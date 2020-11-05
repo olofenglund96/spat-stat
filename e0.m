@@ -54,7 +54,7 @@ etat = eta(2:end);
 eta1 = eta(1:end-1);
 alpha = regress(etat, eta1);
 
-res = etat-eta1*alpha;
+res = eta1-etat*alpha;
 phi = var(res);
 
 %%
@@ -66,3 +66,8 @@ end
 
 i = 1:20
 plot(i, nu, 'o')
+
+%%
+[ycov,lags]=xcov(X,20,'biased');
+plot(lags, ycov(lags));
+
