@@ -49,25 +49,41 @@ plot(t, Y, 'b', t, X*beta, 'r');
 datetick
 
 %%
+c = zeros(25, 1);
+for h = 0:24
+    sum = 0;
+    for i = 1:(length(eta) - h)
+        sum = sum + eta(i)*eta(i+h);
+    end
+    
+    c(h+1) = 1/length(eta) * sum;
+end
+
+p = 0:24;
+plot(p, c(p+1), 'bo');
+xlim([0,25]);
+grid on;
+%%
+hold on;
 plot(t, eta);
 etat = eta(2:end);
 eta1 = eta(1:end-1);
 alpha = regress(etat, eta1);
 
-res = eta1-etat*alpha;
+res = etat-eta1*alpha;
 phi = var(res);
 
 %%
-nu = zeros(20, 1);
-nu(1) = phi
-for i = 2:20
-    nu(i) = alpha*nu(i-1)
+nu = zeros(25, 1);
+nu(1) = alpha^0 / (1 - alpha^2) * phi;
+for i = 1:25
+    nu(i+1) = alpha^i / (1 - alpha^2) * phi;
 end
 
-i = 1:20
-plot(i, nu, 'o')
+i = 0:25;
+hold on;
+plot(i, nu(i+1), 'r');
 
 %%
-[ycov,lags]=xcov(X,20,'biased');
-plot(lags, ycov(lags));
+
 
