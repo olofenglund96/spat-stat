@@ -75,15 +75,27 @@ phi = var(res);
 
 %%
 nu = zeros(25, 1);
-nu(1) = alpha^0 / (1 - alpha^2) * phi;
-for i = 1:25
-    nu(i+1) = alpha^i / (1 - alpha^2) * phi;
-end
+nu = @(h) alpha.^h / (1 - alpha^2) * phi;
 
 i = 0:25;
 hold on;
-plot(i, nu(i+1), 'r');
+plot(i, nu(i), 'r');
 
 %%
+preds = [];
+invp = [];
+invm = [];
 
+offset = 180;
+eta_0 = eta(offset);
+preds(1) = X(offset,:) * beta;
+for i = 1:25
+    preds(i+1) = X(i+offset,:) * beta + alpha^i * eta_0;
+end
 
+invp = preds + 1.96*phi
+
+i = 1:25;
+hold on;
+plot(i, preds(i), 'g');
+plot(i, Y(i+offset+1), 'b', i, X(i+offset+1,:)*beta, 'r');
