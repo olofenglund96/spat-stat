@@ -28,7 +28,7 @@ imagesc(rgbim);
 %%
 im = imread('images/lkab.jpg');
 x = double(im)/255;
-y=x./repmat(sum(x,3),[1,1,3]);
+y=x./repmat(esum(x,3),[1,1,3]);
 
 imagesc(y);
 
@@ -51,12 +51,12 @@ datetick
 %%
 c = zeros(25, 1);
 for h = 0:24
-    sum = 0;
+    esum = 0;
     for i = 1:(length(eta) - h)
-        sum = sum + eta(i)*eta(i+h);
+        esum = esum + eta(i)*eta(i+h);
     end
     
-    c(h+1) = 1/length(eta) * sum;
+    c(h+1) = 1/length(eta) * esum;
 end
 
 p = 0:24;
@@ -74,7 +74,6 @@ res = etat-eta1*alpha;
 phi = var(res);
 
 %%
-nu = zeros(25, 1);
 nu = @(h) alpha.^h / (1 - alpha^2) * phi;
 
 i = 0:25;
@@ -88,14 +87,16 @@ invm = [];
 
 offset = 180;
 eta_0 = eta(offset);
-preds(1) = X(offset,:) * beta;
-for i = 1:25
-    preds(i+1) = X(i+offset,:) * beta + alpha^i * eta_0;
-end
+pred = @(t) X(offset+t,:) * beta + (alpha.^t * eta_0)';
+var = @(t) phi * (1 - alpha.^(2*t)) / (1 - alpha.^2);
 
-invp = preds + 1.96*phi
 
 i = 1:25;
 hold on;
-plot(i, preds(i), 'g');
-plot(i, Y(i+offset+1), 'b', i, X(i+offset+1,:)*beta, 'r');
+plot(i, pred(i), 'g');
+plot(i, Y(i+offset-1), 'b', i, X(i+offset-1,:)*beta, '--r');
+
+plot(i, pred(i) + 1.96*sqrt(var(i))', '--m', i, pred(i) - 1.96*sqrt(var(i))', '--m');
+
+
+
