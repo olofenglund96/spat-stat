@@ -28,7 +28,7 @@ imagesc(rgbim);
 %%
 im = imread('images/lkab.jpg');
 x = double(im)/255;
-y=x./repmat(esum(x,3),[1,1,3]);
+y=x./repmat(sum(x,3),[1,1,3]);
 
 imagesc(y);
 
@@ -88,7 +88,7 @@ invm = [];
 offset = 180;
 eta_0 = eta(offset);
 pred = @(t) X(offset+t,:) * beta + (alpha.^t * eta_0)';
-var = @(t) phi * (1 - alpha.^(2*t)) / (1 - alpha.^2);
+varp = @(t) phi * (1 - alpha.^(2*t)) / (1 - alpha.^2);
 
 
 i = 1:25;
@@ -96,7 +96,7 @@ hold on;
 plot(i, pred(i), 'g');
 plot(i, Y(i+offset-1), 'b', i, X(i+offset-1,:)*beta, '--r');
 
-plot(i, pred(i) + 1.96*sqrt(var(i))', '--m', i, pred(i) - 1.96*sqrt(var(i))', '--m');
+plot(i, pred(i) + 1.96*sqrt(varp(i))', '--m', i, pred(i) - 1.96*sqrt(varp(i))', '--m');
 
 
 
