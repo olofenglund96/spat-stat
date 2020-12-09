@@ -34,7 +34,7 @@ else
 end
 
 %combine Q_x and Qbeta and create observation matrix
-Qbeta = qbeta * speye(7);
+Qbeta = qbeta * speye(size(B, 2));
 Qall = blkdiag(Q_x, Qbeta);
 Aall = [A B];
 
@@ -72,8 +72,7 @@ if ok_x~=0 || ok_xy~=0
 end
 
 %note that f = -log_obs + x_mode'*Q*x_mode/2.
-det(Q_xy)
-negloglike = -f - log(sqrt(det(Q_xy)));
+negloglike = -sum(log(diag(R_x))) + f + sum(log(diag(R_xy)));
 
 %inverse reorder before returning
 x_mode(p) = x_mode;
